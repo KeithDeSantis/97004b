@@ -6,14 +6,11 @@ import { ObjectFlags } from 'typescript';
 import MappingModal from './MappingModal';
 import PrefillInput from './PrefillInput';
 
-//todo this modal is shared (info wise) between all nodes atm. Gotta fix that
-
-export default function PrefillModal({ getNodeById, getRootId, onClose, open, node}: { getNodeById: any, getRootId: any, onClose: any; open: boolean, node: Node }) {
+export default function PrefillModal({ getNodeById, getRootId, onClose, open, selectedNode, node, mappingIsOpen, setMappingIsOpen}: { getNodeById: any, getRootId: any, onClose: any; open: boolean, selectedNode: Node, node: Node, mappingIsOpen: boolean, setMappingIsOpen: any }) {
     const portalDiv = document.getElementById('prefillPortal')!;
     const [emailSelected, setEmailSelected] = useState(true);
     const [checkboxSelected, setCheckboxSelected] = useState(false);
     const [objectSelected, setObjectSelected] = useState(false);
-    const [mappingIsOpen, setMappingIsOpen] = useState(false);
 
     function clearSelection(event: React.MouseEvent<HTMLElement>) {
         let btn = event.target as HTMLButtonElement;
@@ -32,12 +29,11 @@ export default function PrefillModal({ getNodeById, getRootId, onClose, open, no
         setMappingIsOpen(true);
     }
 
-    
-    if(open) {
+    if(open && node['id'] == selectedNode['id']) {
         const root = getNodeById(getRootId(node));
         const rootLabel = root['data']['label'];
     //todo tmp
-    let emailStr = "email: "+rootLabel+".email";
+    let emailStr = emailSelected ? "email: "+rootLabel+".email": "email";
         return ReactDom.createPortal(
             <>
                 <div id="prefillOverlay" onClick={onClose} />

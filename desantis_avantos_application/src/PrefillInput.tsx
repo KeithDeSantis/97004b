@@ -2,8 +2,6 @@ import { Node } from '@xyflow/react';
 import React, { useState } from 'react';
 import ReactDom from 'react-dom';
 
-//todo this modal is shared (info wise) between all nodes atm. Gotta fix that
-
 export default function PrefillInput({ type, visible, value, clearSelection, openMapper }: { type: string, visible: boolean, value: string, clearSelection: any, openMapper: any }) {
 
   // Create span element with appropriate styling and onClick functionality

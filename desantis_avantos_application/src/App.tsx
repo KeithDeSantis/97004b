@@ -41,12 +41,12 @@ let defaultNode = {
   }
 }
 
-function Flow() {
+function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [prefillIsOpen, setPrefillIsOpen] = useState(false);
+  const [mappingIsOpen, setMappingIsOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<Node>(defaultNode);
-  const reactFlowInstance = useReactFlow();
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),
@@ -81,6 +81,11 @@ function Flow() {
     else {
       return getRootId(getParentIds(id)[0]);
     }
+  }
+
+  function closePrefillModal() {
+    setPrefillIsOpen(false);
+    setMappingIsOpen(false);
   }
 
   // todo theres gotta be a better way to traverse back than adding the nodes to the data dictionary
@@ -128,10 +133,12 @@ function Flow() {
     getGraph();
   }, []);
 
+  // todo this is in effort to have different modals for each node, maybe if the PrefillModal combined the open boolean and a "selected node" boolean, only displaying if it matches its boolean
+  let prefillModals = nodes.map(n => <PrefillModal open={prefillIsOpen} onClose={closePrefillModal} selectedNode={selectedNode} node={n} getRootId={getRootId} getNodeById={getNodeById} mappingIsOpen={mappingIsOpen} setMappingIsOpen={setMappingIsOpen} />);
 
   return (
     <>
-      <PrefillModal open={prefillIsOpen} onClose={() => setPrefillIsOpen(false)} node={selectedNode} getRootId={getRootId} getNodeById={getNodeById} />
+      {prefillModals}
       <div style={{ width: '100vw', height: '100vh' }}>
         <ReactFlow
           nodes={nodes}
@@ -143,14 +150,6 @@ function Flow() {
         />
       </div>
     </>
-  );
-}
-
-function App() {
-  return (
-    <ReactFlowProvider>
-      <Flow />
-    </ReactFlowProvider>
   );
 }
 

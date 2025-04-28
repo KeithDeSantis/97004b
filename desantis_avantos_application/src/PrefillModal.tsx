@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ReactDom from 'react-dom';
 import { ObjectFlags } from 'typescript';
 import MappingModal from './MappingModal';
+import PrefillInput from './PrefillInput';
 
 //todo this modal is shared (info wise) between all nodes atm. Gotta fix that
 
@@ -17,11 +18,11 @@ export default function PrefillModal({ getNodeById, getRootId, onClose, open, no
     function clearSelection(event: React.MouseEvent<HTMLElement>) {
         let btn = event.target as HTMLButtonElement;
         let btnId = btn.id;
-        if(btnId == "emailBtn") {
+        if(btnId == "email") {
             setEmailSelected(false);
-        } else if(btnId == "objectBtn") {
+        } else if(btnId == "object") {
             setObjectSelected(false);
-        } else if(btnId == "checkboxBtn") {
+        } else if(btnId == "checkbox") {
             setCheckboxSelected(false);
         }
     }
@@ -35,6 +36,8 @@ export default function PrefillModal({ getNodeById, getRootId, onClose, open, no
     if(open) {
         const root = getNodeById(getRootId(node));
         const rootLabel = root['data']['label'];
+    //todo tmp
+    let emailStr = "email: "+rootLabel+".email";
         return ReactDom.createPortal(
             <>
                 <div id="prefillOverlay" onClick={onClose} />
@@ -44,33 +47,9 @@ export default function PrefillModal({ getNodeById, getRootId, onClose, open, no
                         <button onClick={onClose}>x</button>
                         Prefill
                     </div>
-                    { checkboxSelected &&
-                        <div className="container horizontal sGap">
-                            <span className="prefill prefillChosen">dynamic_checkbox_group</span>
-                            <button id="checkboxBtn" onClick={clearSelection}>x</button>
-                        </div>
-                    }
-                    { !checkboxSelected &&
-                        <span className="prefill prefillEmpty" onClick={openMappingModal}>dynamic_checkbox_group</span>
-                    }
-                    { objectSelected &&
-                        <div className="container horizontal sGap">
-                            <span className="prefill prefillChosen">dynamic_object</span>
-                            <button id="objectBtn" onClick={clearSelection}>x</button>
-                        </div>
-                    }
-                    { !objectSelected &&
-                        <span className="prefill prefillEmpty" onClick={openMappingModal}>dynamic_object</span>
-                    }
-                    { emailSelected &&
-                        <div className="container horizontal sGap">
-                            <span className="prefill prefillChosen">email: {rootLabel}.email</span>
-                            <button  id="emailBtn" onClick={clearSelection}>x</button>
-                        </div>
-                    }
-                    { !emailSelected &&
-                        <span className="prefill prefillEmpty"  onClick={openMappingModal}>email</span>
-                    }
+                    <PrefillInput type="checkBox" visible={checkboxSelected} value="dynamic_checkbox_group" clearSelection={clearSelection} openMapper={openMappingModal}/>
+                    <PrefillInput type="object" visible={objectSelected} value="dynamic_object" clearSelection={clearSelection} openMapper={openMappingModal}/>
+                    <PrefillInput type="email" visible={emailSelected} value={emailStr} clearSelection={clearSelection} openMapper={openMappingModal}/>
                 </div>
             </>,
             portalDiv

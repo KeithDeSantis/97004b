@@ -6,7 +6,6 @@ import { ObjectFlags } from 'typescript';
 
 export default function MappingModal({ open }: { open: boolean }) {
     const portalDiv = document.getElementById('mappingPortal')!;
-    console.log(open);
 
     if(open) {
         return ReactDom.createPortal(

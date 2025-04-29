@@ -57,6 +57,10 @@
   gap: 5px;
 }
 
+.lGap {
+  gap: 15px;
+}
+
 #prefillModalContainer {
   background-color:  white;
   padding: 10px;
@@ -89,7 +93,70 @@
 }
 
 .mappingContainer {
-  background-color: red;
+  background-color: rgb(230, 225, 225);
+  top: 0%;
+  left: 0%;
+  right: 66%;
+  bottom: 0%;
   position: fixed;
   z-index: 1000;
+}
+
+.dropdown {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: black;
+  display: block;
+  border: none;
+  background: none;
+  width:100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+
+.dropdown:hover {
+  color: #818181;
+}
+
+.option, .selectedOption {
+  text-align: center;
+}
+
+.option:hover {
+  background-color: #00c8ff81;
+}
+
+.selectedOption {
+  background-color: #f7de00c2;
+}
+
+.selectedOption {
+  background-color: #00c8ff81;
+}
+
+.caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+.selectedDropdown {
+  background-color: #00c8ff81;
+}
+
+.collapsed {
+  display: none;
+}
+
+i {
+  transition: transform 200ms;
+}
+
+i.closed {
+  transform: rotate(90deg);
+}
+
+#confirm {
+  display: none;
 }

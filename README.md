@@ -37,6 +37,11 @@ A few thing I believe I did well on this project:
     * This means my code will be able to take in other `graph.json` files that differ (so long as they follow the same format) and generate graphs accordingly.
     * In the `graph.json`, 3 different forms were listed, with each node pointing to one of the three. Rather than hard code in these values (even though all 3 forms had the same `fields_schema`), I programmatically parsed the data so that nodes would only be able to select field options from the corresponding fields in a node's form's `field_schema`.
     * Finally, I implemented my own method of tracking node parentage in the `DAG`, and traversing the `DAG` to determine all ancestors and roots of a given node. I am new to `ReactFlow`, so I assume there is a cleaner way to do this that is shipped with it, but I was unable to find much relating to the use case needed (most docs discussing parent nodes were about `SubFlows`).
+    * I also use the `map()` function to generate unique Prefill and Mapping modals for each node and each node's mappable values. This ensured each node's saved configuration was unique and persisted, even when the modals were closed or other modals were opened.
+
+## Adding New Data ##
+
+As I mentioned above, I built out the application logic to programmatically render the nodes and Prefill options based entirely on the `graph.json` served by the `frontendserver`. To add new fields, nodes, or edges, simply adjust the `graph.json` while still adhering to its overall format, and the application will dynamically adjust.
 
 Thank you for this opportunity and I hope to hear from you soon!
 

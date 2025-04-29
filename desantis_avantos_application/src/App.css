@@ -57,6 +57,10 @@
   gap: 5px;
 }
 
+.lGap {
+  gap: 15px;
+}
+
 #prefillModalContainer {
   background-color:  white;
   padding: 10px;
@@ -89,7 +93,11 @@
 }
 
 .mappingContainer {
-  background-color: red;
+  background-color: rgb(230, 225, 225);
+  top: 0%;
+  left: 0%;
+  right: 66%;
+  bottom: 0%;
   position: fixed;
   z-index: 1000;
 }

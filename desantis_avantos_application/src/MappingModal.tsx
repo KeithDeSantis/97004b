@@ -1,15 +1,16 @@
-import { Node } from '@xyflow/react';
-import { clear } from 'console';
-import React, { useState } from 'react';
 import ReactDom from 'react-dom';
-import { ObjectFlags } from 'typescript';
+import { useMapperIsOpen } from './AppContext'
 
-export default function MappingModal({ open }: { open: boolean }) {
+//todo pass node here, use same method as with prefill modal to have unique ones for each
+export default function MappingModal() {
     const portalDiv = document.getElementById('mappingPortal')!;
+    const mappingIsOpen = useMapperIsOpen();
 
-    if(open) {
+    if(mappingIsOpen) {
         return ReactDom.createPortal(
-            <div className="mappingContainer container vertical mGap">text</div>,
+            <div className="mappingContainer container vertical mGap">
+                
+            </div>,
             portalDiv
         );
     }

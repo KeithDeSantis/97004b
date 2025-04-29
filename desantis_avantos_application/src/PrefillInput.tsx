@@ -1,10 +1,8 @@
-import { Node } from '@xyflow/react';
-import React, { useState } from 'react';
-import ReactDom from 'react-dom';
 import { useOpenMappingModal, useSetSelectedPrefillContext } from './AppContext'
 
 export default function PrefillInput({ type, visible, value, clearSelection }: { type: string, visible: boolean, value: string, clearSelection: any }) {
 
+  // Contexts
   const openMappingModal = useOpenMappingModal();
   const setSelectedPrefillContext = useSetSelectedPrefillContext();
 

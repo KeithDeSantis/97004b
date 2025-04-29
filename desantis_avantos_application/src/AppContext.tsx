@@ -28,6 +28,7 @@ let defaultNode = {
 }
 let initialForms: { id: string, field_schema: string[] }[] = []
 
+// All contexts that will be used
 const PrefillIsOpenContext = React.createContext(false);
 const MapperIsOpenContext = React.createContext(false);
 const OpenMappingModalContext = React.createContext(() => {});
@@ -51,6 +52,7 @@ export function useFormsContext() { return useContext(FormsContext); }
 export function useSelectedPrefillContext() { return useContext(SelectedPrefillContext); }
 export function useSetSelectedPrefillContext() { return useContext(SetSelectedPrefillContext); }
 
+// App provider component
 export function AppProvider() {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -71,29 +73,31 @@ export function AppProvider() {
         setPrefillIsOpen(true);
     }
 
+    // Open the MapperModal
     function openMappingModal() {
         setMappingIsOpen(true);
     }
 
+    // Close the MapperModal
     function closeMappingModal() {
         if(mappingIsOpen) { setMappingIsOpen(false); }
     }
 
+    // Close the PrefillModal (and MapperModal if it is open)
     function closePrefillModal() {
         if(prefillIsOpen) {
             setPrefillIsOpen(false);
-            setMappingIsOpen(false);
+            closeMappingModal();
         }
     }
 
-    // todo theres gotta be a better way to traverse back than adding the nodes to the data dictionary
     // Async function to get graph from endpoint
     async function getGraph() {
         let endpointData = await fetch(endpointURL).then((response) => response.json());
         let endpointNodes: { id: string, position: { x: number, y: number }, data: {label: string, raw: {}, parents: string[], component_id: string } }[] = [];
         let endpointEdges: { id: string, source: string, target: string }[] = [];
         let endpointForms: { id: string, field_schema: string[] }[] = [];
-        // todo this is a terrible way to do this
+        // I assume there's a built in way to do this with ReactFlow, but did not find much helpful info online, so I will be tracking parentage of nodes myself
         let parentDict: { [id: string] : string[] } = {};
         for(let edge of endpointData['edges']) {
             endpointEdges.push({
@@ -118,6 +122,8 @@ export function AppProvider() {
                 label: node['data']['name'],
                 raw: node,
                 parents: parentDict[node['id']],
+                // This is the ID of the form that the node maps to in graph.json.
+                // We'll need it when populating the dropdown options for each form in the MapperModal
                 component_id: node['data']['component_id']
             }
             });
@@ -138,10 +144,9 @@ export function AppProvider() {
         getGraph();
     }, []);
 
-    // In order to maintain separation of state by nodes, each has its own prefill and mapping modal.
+    // In order to maintain separation of state by nodes, each has its own PrefillModal.
     // Could maybe create custom nodes to store info relating to the prefill UI, but for sake of time will do it this way
     let prefillModals = nodes.map(n => <PrefillModal key={n['id']} node={n} />);
-    //let mappingModals = nodes.map(n => <MappingModal key={n['id']} node={n} />);
 
     return (
         <PrefillIsOpenContext.Provider value={prefillIsOpen}>

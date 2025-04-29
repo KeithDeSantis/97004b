@@ -1,24 +1,28 @@
 import React, { useState } from 'react'
 import ReactDom from 'react-dom';
-import { useMapperIsOpen, useSelectedPrefillContext, useSelectedNode, useNodesCtx, useFormsContext, useCloseMappingModal } from './AppContext'
+import { useMapperIsOpen, useSelectedPrefillContext, useNodesCtx, useFormsContext, useCloseMappingModal } from './AppContext'
 import { Node } from '@xyflow/react';
 
 export default function MappingModal({ node, inputType, selectMapping }: { node: Node, inputType: string, selectMapping: any }) {
-    const portalDiv = document.getElementById('mappingPortal')!;
+
+    // Contexts
     const mappingIsOpen = useMapperIsOpen();
-    const selectedNode = useSelectedNode();
     const selectedPrefill = useSelectedPrefillContext();
     const nodes = useNodesCtx();
     const forms = useFormsContext();
     const closeMappingModal = useCloseMappingModal();
 
+    // Constants
+    const portalDiv = document.getElementById('mappingPortal')!;
+
+    // State
     const [selectedOption, setSelectedOption] = useState<HTMLElement>();
 
     // Show dropdown options
     function selectDropdown(event: React.MouseEvent<HTMLElement>) {
         let btn = event.target as HTMLButtonElement;
         let content;
-        //May have clicked the carot instead of the whole dropdown. Put this hacky workaround in place for now to get more important functionality working
+        // May have clicked the carot instead of the whole dropdown. Put this hacky workaround in place for now to get more important functionality working
         if(btn.children.length != 0) {
             btn.classList.toggle('selectedDropdown');
             btn.children[0].classList.toggle('closed');
@@ -55,6 +59,7 @@ export default function MappingModal({ node, inputType, selectMapping }: { node:
                 ancestors.push(parent);
                 ancestors.concat(getAncestors(parent, ancestors));
             }
+            // Deduplicate ancestor list
             return [... new Set(ancestors)];
         }
     }

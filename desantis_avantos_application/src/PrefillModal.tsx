@@ -6,19 +6,24 @@ import MappingModal from './MappingModal';
 import { usePrefillIsOpen, useMapperIsOpen, useNodesCtx, useSelectedNode, useClosePrefillModal, useCloseMappingModal } from './AppContext'
 
 export default function PrefillModal({ node }: { node: Node }) {
+
+    // Contexts
     const prefillIsOpen = usePrefillIsOpen();
     const nodes = useNodesCtx();
     const selectedNode = useSelectedNode();
     const closePrefillModal = useClosePrefillModal();
+    const closeMappingModal = useCloseMappingModal();
+
+    // Constants
     const portalDiv = document.getElementById('prefillPortal')!;
+
+    // State
     const [emailSelected, setEmailSelected] = useState(true);
     const [checkboxSelected, setCheckboxSelected] = useState(false);
     const [objectSelected, setObjectSelected] = useState(false);
     const [emailString, setEmailString] = useState('replace');
     const [objectString, setObjectString] = useState('dynamic_object');
     const [checkboxString, setCheckboxString] = useState('dynamic_checkbox_group');
-    const closeMappingModal = useCloseMappingModal();
-    const mapperIsOpen = useMapperIsOpen();
 
     // Clear selection of input field
     function clearSelection(event: React.MouseEvent<HTMLElement>) {
@@ -80,7 +85,7 @@ export default function PrefillModal({ node }: { node: Node }) {
     }
 
     if(prefillIsOpen && node['id'] == selectedNode['id']) {
-        //todo tmp
+        // Set email to root's email to start
         const root = getNodeById(getRootId(node['id']));
         const rootLabel = root['data']['label'];
         if(emailString == 'replace') {

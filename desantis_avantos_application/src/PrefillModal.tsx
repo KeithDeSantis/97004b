@@ -1,33 +1,38 @@
 import { Node } from '@xyflow/react';
-import { clear } from 'console';
 import React, { useState } from 'react';
 import ReactDom from 'react-dom';
-import { ObjectFlags } from 'typescript';
-import MappingModal from './MappingModal';
 import PrefillInput from './PrefillInput';
-import { usePrefillIsOpen, useNodesCtx, useSelectedNode, useClosePrefillModal } from './AppContext'
+import MappingModal from './MappingModal';
+import { usePrefillIsOpen, useMapperIsOpen, useNodesCtx, useSelectedNode, useClosePrefillModal, useCloseMappingModal } from './AppContext'
 
 export default function PrefillModal({ node }: { node: Node }) {
-
     const prefillIsOpen = usePrefillIsOpen();
     const nodes = useNodesCtx();
     const selectedNode = useSelectedNode();
     const closePrefillModal = useClosePrefillModal();
-
     const portalDiv = document.getElementById('prefillPortal')!;
     const [emailSelected, setEmailSelected] = useState(true);
     const [checkboxSelected, setCheckboxSelected] = useState(false);
     const [objectSelected, setObjectSelected] = useState(false);
+    const [emailString, setEmailString] = useState('replace');
+    const [objectString, setObjectString] = useState('dynamic_object');
+    const [checkboxString, setCheckboxString] = useState('dynamic_checkbox_group');
+    const closeMappingModal = useCloseMappingModal();
+    const mapperIsOpen = useMapperIsOpen();
 
+    // Clear selection of input field
     function clearSelection(event: React.MouseEvent<HTMLElement>) {
         let btn = event.target as HTMLButtonElement;
         let btnId = btn.id;
         if(btnId == "email") {
             setEmailSelected(false);
-        } else if(btnId == "object") {
+            setEmailString("email");
+        } else if(btnId == "dynamic_object") {
             setObjectSelected(false);
-        } else if(btnId == "checkbox") {
+            setObjectString("dynamic_object");
+        } else if(btnId == "dynamic_checkbox_group") {
             setCheckboxSelected(false);
+            setCheckboxString("dynamic_checkbox_group");
         }
     }
 
@@ -44,7 +49,7 @@ export default function PrefillModal({ node }: { node: Node }) {
         let n = getNodeById(id);
         return n['data']['parents'];
     }
-    // Todo assuming this is fine to do since the challenge implies there is only one root
+    // Assuming this is fine to do since the challenge implies there is only one root
     function getRootId(id: string): string {
         if(!getParentIds(id)) {
             return id;
@@ -54,24 +59,47 @@ export default function PrefillModal({ node }: { node: Node }) {
         }
     }
 
+    // Handles changing the field value chosen in the mapping modal
+    function selectMapping(form: string, option: string, inputType: string) {
+        // weird bug where selectMapping() is getting called when
+        // clicking the prefill options to open the mapping modal
+        // temporary fix in place
+        if(form) {
+            let newValue = inputType + ": " + form + "." + option
+            if(inputType == "email") {
+                setEmailSelected(true);
+                setEmailString(newValue);
+            } else if (inputType == "dynamic_checkbox_group") {
+                setCheckboxSelected(true);
+                setCheckboxString(newValue);
+            } else if (inputType == "dynamic_object") {
+                setObjectSelected(true);
+                setObjectString(newValue);
+            }
+        }
+    }
+
     if(prefillIsOpen && node['id'] == selectedNode['id']) {
-        const rootId: string = getRootId(node['id']);
-        const root = getNodeById(rootId);
-        const rootLabel = root['data']['label'];
         //todo tmp
-        let emailStr = emailSelected ? "email: "+rootLabel+".email": "email";
+        const root = getNodeById(getRootId(node['id']));
+        const rootLabel = root['data']['label'];
+        if(emailString == 'replace') {
+            setEmailString(emailSelected ? "email: "+rootLabel+".email": "email");
+        }
         return ReactDom.createPortal(
             <>
+                <MappingModal key={node['id'] + 'checkbox'} node={node} inputType='dynamic_checkbox_group' selectMapping={selectMapping} />
+                <MappingModal key={node['id'] + 'object'} node={node} inputType='dynamic_object' selectMapping={selectMapping} />
+                <MappingModal key={node['id'] + 'email'} node={node} inputType='email' selectMapping={selectMapping} />
                 <div id="prefillOverlay" onClick={closePrefillModal} />
-                <MappingModal />
-                <div id="prefillModalContainer" className="container vertical mGap">
+                <div id="prefillModalContainer" className="container vertical mGap" onClick={closeMappingModal}>
                     <div className="container horizontal sGap">
                         <button onClick={closePrefillModal}>x</button>
                         Prefill
                     </div>
-                    <PrefillInput type="checkBox" visible={checkboxSelected} value="dynamic_checkbox_group" clearSelection={clearSelection} />
-                    <PrefillInput type="object" visible={objectSelected} value="dynamic_object" clearSelection={clearSelection} />
-                    <PrefillInput type="email" visible={emailSelected} value={emailStr} clearSelection={clearSelection} />
+                    <PrefillInput type="dynamic_checkbox_group" visible={checkboxSelected} value={checkboxString} clearSelection={clearSelection} />
+                    <PrefillInput type="dynamic_object" visible={objectSelected} value={objectString} clearSelection={clearSelection} />
+                    <PrefillInput type="email" visible={emailSelected} value={emailString} clearSelection={clearSelection} />
                 </div>
             </>,
             portalDiv

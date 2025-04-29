@@ -2,6 +2,8 @@
 
 Please find my submission for the coding challenged enclosed.
 
+Follow this [link]() to see the video of me programming part of this application.
+
 ## Folder Structure ##
 
 * `desantis_avantos_application`

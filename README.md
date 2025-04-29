@@ -2,7 +2,7 @@
 
 Please find my submission for the coding challenged enclosed.
 
-Follow this [link]() to see the video of me programming part of this application.
+Follow this [link](https://youtu.be/QBNBIvok_MI) to see the video of me programming part of this application.
 
 ## Folder Structure ##
 
